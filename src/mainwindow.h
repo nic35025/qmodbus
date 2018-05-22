@@ -26,6 +26,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableWidgetItem>
 #include <QTimer>
 
 #include "modbus.h"
@@ -40,7 +41,7 @@ public:
     {
         setupUi( this );
         aboutTextLabel->setText(
-            aboutTextLabel->text().arg( "0.3.0" ) );
+            aboutTextLabel->text().arg( "0.5.2" ) );
     }
 } ;
 
@@ -89,6 +90,15 @@ private slots:
     void onTcpPortActive(bool active);
     void resetStatus( void );
     void setStatusError(const QString &msg);
+    void checkBoxHexAddress_toggle( bool hex_dec );
+    void on_pbFuncCode_3_clicked();
+    void on_pbFuncCode_4_clicked();
+    void on_pbFuncCode_6_clicked();
+    void on_pbFuncCode_16_clicked();
+
+    void on_regTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+
+    void on_regTable_itemChanged(QTableWidgetItem *item);
 
 private:
     void keyPressEvent(QKeyEvent* event);
@@ -101,6 +111,8 @@ private:
     QTimer * m_pollTimer;
     QTimer * m_statusTimer;
     bool m_poll;
+    void regTable_add(int i, bool is16Bit, uint16_t addr, QString dataType, uint16_t data );
+
 };
 
 #endif // MAINWINDOW_H
