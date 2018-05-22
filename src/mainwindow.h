@@ -1,7 +1,7 @@
 /*
  * mainwindow.h - header file for MainWindow class
  *
- * Copyright (c) 2009-2014 Tobias Doerffel / Electronic Design Chemnitz
+ * Copyright (c) 2009-2014 Tobias Junghans / Electronic Design Chemnitz
  *
  * This file is part of QModBus - http://qmodbus.sourceforge.net
  *
@@ -110,6 +110,7 @@ private:
     QLabel * m_statusText;
     QTimer * m_pollTimer;
     QTimer * m_statusTimer;
+    bool m_tcpActive;
     bool m_poll;
     void regTable_add(int i, bool is16Bit, uint16_t addr, QString dataType, uint16_t data );
 

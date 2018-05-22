@@ -1,7 +1,7 @@
 /*
  * mainwindow.cpp - implementation of MainWindow class
  *
- * Copyright (c) 2009-2013 Tobias Doerffel / Electronic Design Chemnitz
+ * Copyright (c) 2009-2013 Tobias Junghans / Electronic Design Chemnitz
  *
  * This file is part of QModBus - http://qmodbus.sourceforge.net
  *
@@ -49,6 +49,7 @@ MainWindow::MainWindow( QWidget * _parent ) :
 	QMainWindow( _parent ),
 	ui( new Ui::MainWindowClass ),
 	m_modbus( NULL ),
+	m_tcpActive(false),
 	m_poll(false)
 {
 	ui->setupUi(this);
@@ -410,8 +411,12 @@ void MainWindow::regTable_add( int i, bool is16Bit, uint16_t addr,
 
 void MainWindow::sendModbusRequest( void )
 {
+	if( m_tcpActive )
+		ui->tcpSettingsWidget->tcpConnect();
+
 	if( m_modbus == NULL )
 	{
+		setStatusError( tr("Not configured!") );
 		return;
 	}
 
@@ -545,8 +550,7 @@ void MainWindow::sendModbusRequest( void )
 			err += tr( "Protocol error" );
 			err += ": ";
 			err += tr( "Number of registers returned does not "
-					"match number of registers "
-							"requested!" );
+					"match number of registers requested!" );
 		}
 
 		if( err.size() > 0 )
@@ -588,6 +592,7 @@ void MainWindow::onRtuPortActive(bool active)
 			modbus_register_monitor_add_item_fnc(m_modbus, MainWindow::stBusMonitorAddItem);
 			modbus_register_monitor_raw_data_fnc(m_modbus, MainWindow::stBusMonitorRawData);
 		}
+		m_tcpActive = false;
 	}
 	else {
 		m_modbus = NULL;
@@ -602,6 +607,7 @@ void MainWindow::onAsciiPortActive(bool active)
             modbus_register_monitor_add_item_fnc(m_modbus, MainWindow::stBusMonitorAddItem);
             modbus_register_monitor_raw_data_fnc(m_modbus, MainWindow::stBusMonitorRawData);
         }
+        m_tcpActive = false;
     }
     else {
         m_modbus = NULL;
@@ -610,6 +616,8 @@ void MainWindow::onAsciiPortActive(bool active)
 
 void MainWindow::onTcpPortActive(bool active)
 {
+	m_tcpActive = active;
+
 	if (active) {
 		m_modbus = ui->tcpSettingsWidget->modbus();
 		if (m_modbus) {
